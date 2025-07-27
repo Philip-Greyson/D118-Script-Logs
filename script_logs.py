@@ -66,16 +66,23 @@ if __name__ == '__main__': # main file execution
                 entries = os.listdir(directory) # find all objects in the target directory
                 for entry in entries:
                     if "log" in entry.lower() and not ".py" in entry.lower(): # look for files that have log in their name, case insensitive, but ignore this script and other .py scripts
-                        logFile = directory + "\\" + entry
-                        print(f'Found file {logFile} in {directory}')
-                        with open(logFile,'r') as readFile:
-                            for line in readFile:
-                                if "ERROR" in line:
-                                    print(line.strip() + "  |  " + logFile, file=errors) # strip the newline character off the end and output it, also add the file the error was found in
-                                    errorCount += 1 # add 1 to error count
-                                    errorString = errorString + line
-                                if "WARN" in line:
-                                    print(line.strip(), file=warnings)
+                        try:
+                            logFile = directory + "\\" + entry
+                            print(f'Found file {logFile} in {directory}')
+                            with open(logFile,'r', encoding='utf-8') as readFile:
+                                for line in readFile:
+                                    if "ERROR" in line:
+                                        print(line.strip() + "  |  " + logFile, file=errors) # strip the newline character off the end and output it, also add the file the error was found in
+                                        errorCount += 1 # add 1 to error count
+                                        errorString = errorString + line
+                                    if "WARN" in line:
+                                        print(line.strip(), file=warnings)
+                        except Exception as er:
+                            metaError = f'ERROR while processing error log {logFile}: {er}'
+                            print(metaError)
+                            print(metaError, file=errors)
+                            errorString = errorString + metaError
+                            errorCount += 1  # increment the error count for the error we encountered while running which is kinda funny
     if errorCount > 0:
         print(f'Found {errorCount} errors, emailing summary')
         mime_message = EmailMessage() # create a email message object
