@@ -81,7 +81,7 @@ if __name__ == '__main__': # main file execution
                             metaError = f'ERROR while processing error log {logFile}: {er}'
                             print(metaError)
                             print(metaError, file=errors)
-                            errorString = errorString + metaError
+                            errorString = errorString + metaError + '\n'
                             errorCount += 1  # increment the error count for the error we encountered while running which is kinda funny
     if errorCount > 0:
         print(f'Found {errorCount} errors, emailing summary')
